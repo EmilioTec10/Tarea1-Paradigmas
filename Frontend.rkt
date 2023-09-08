@@ -1,15 +1,5 @@
 #lang racket/gui
 
-; Coords for nodes
-(define node1 '(180 138 180 138))
-(define node2 '(360 138 360 138))
-(define node3 '(540 276 540 276))
-(define node4 '(720 414 720 414))
-(define node5 '(720 552 720 552))
-(define node6 '(540 552 540 552))
-(define node7 '(360 414 360 414))
-(define node8 '(180 276 180 276))
-
 ; Create a main window and set their parameters
 (define frame (new frame%
                    [label "Simple GUI"]
@@ -27,8 +17,8 @@
 ;------------------------------------------------------------------------------------------------------------------
 ; Panel that contains insert nodes funtionality
 (define InsNodesPanel (new vertical-panel% [parent verticalBox]
-                                  [border 50]
-                                  [min-height 230]))   
+                                  [border 20]
+                                  [min-height 150]))   
 
 ; Add a text field to InsNodes Panel that get names of the Nodes from user
 (define text-field (new text-field% [parent InsNodesPanel]
@@ -62,37 +52,35 @@
                                         (set! inserted-nodes (cons text inserted-nodes)) ; Store in a list the new nodes
                                         (printf "Inserted: ~a\n" text)
                                         (send text-field set-value "") ; Clear the text field after insert
-
-                                  ((new canvas% [parent drawGraphPanel]
-                                        [paint-callback
-                                        (lambda (canvas dc)
-                                        (send dc set-brush "red" 'solid) ; set pincel to red color
-                                        (send dc draw-ellipse 100 100 200 200) ; use racket ellipse function to draw a circle
-                                        (send dc set-text-foreground "black") 
-                                        (send dc set-font (make-font #:size 17 #:weight 'bold))
-                                        (send dc draw-text text 160 185))]) ; Write a name in middle of the circle X Y)
-
+                                      
+                                  (define node (list-ref nodeCoords nodeCounter))
+                                  (drawNode (getXCoord node) (getYCoord node) text)
+                                  (set! nodeCounter (+ nodeCounter 1))
                                   ; Refresh the choices in choice boxes
                                   (send begginChoiceRel append text) 
                                   (send endChoiceRel append text) 
                                   (send begginChoiceDir append text) 
-                                  (send endChoiceDir append text)))) 
+                                  (send endChoiceDir append text))) 
                                 ]))  
 
-(define inserted-nodes '()) ; Initialize an empty list to store inserted nodes 
+; Initialize an empty list to store inserted nodes
+(define inserted-nodes '()) ;when contains items looks like '("Rusia" "Brazil" "France")
+
  
 ;-------------------------------------------------------------------------------------------------------------------                                  
 
 ; Panel that contains insert relations between nodes functionality
 (define insRelPanel (new vertical-panel% [parent verticalBox]
                                 [border 50]
-                                [min-height 230]))
+                                [min-height 300]))
 
+; Title of the section of relations
 (define relTitle (new message% [parent insRelPanel]
                         [label "Inserte las relaciones entre nodos aquí"]
                         [font (make-font #:size 16 #:weight 'bold)]
                         [vert-margin 3]))
 
+; First choices box to indicate the beggin node
 (define begginChoiceRel (new choice%
                     [label "Inicio:  "]
                     [parent insRelPanel]
@@ -101,6 +89,7 @@
                     [min-width 100]
                     [vert-margin 3]))
 
+; Second choices box to indicate the destiny node
 (define endChoiceRel (new choice%
                     [label "Destino:  "]
                     [parent insRelPanel]
@@ -109,6 +98,7 @@
                     [min-width 100]
                     [vert-margin 3]))
 
+; Input text field to indicate the weight or distance of a relation path
 (define distanceInput (new text-field% [parent insRelPanel]
                                     [label "Distancia entre Nodos: "]
                                     [font (make-font #:size 14 #:weight 'bold)]
@@ -130,8 +120,9 @@
 
 ; Panel that contains insert relations between nodes functionality
 (define getDirPanel (new vertical-panel% [parent verticalBox]
-                                [border 50]
-                                [min-height 230]))
+                                [border 10]
+                                [min-height 300]))
+
 (define dirTitle (new message% [parent getDirPanel]
                         [label "Calcule las rutas aquí"]
                         [font (make-font #:size 16 #:weight 'bold)]))
@@ -163,6 +154,23 @@
                    [callback (lambda (button event)
                                (display (send begginChoiceDir get-selection) newline))]))
 
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Falta Funcionalidad <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+(define deleteGraph (new button%
+                   [parent getDirPanel]
+                   [label "Eliminar Mapa"]
+                   [vert-margin 50]
+                   [font (make-font #:size 15 #:weight 'bold)]
+                   [min-width 100]
+                   [min-height 50]
+                   [callback (lambda (button event)
+                               (set! inserted-nodes '())
+                               (send dc erase)
+                               (set! nodeCounter 0)
+                               (send begginChoiceRel clear)
+                               (send endChoiceRel clear)
+                               (send begginChoiceDir clear)
+                               (send endChoiceDir clear))]))
+
 ;------------------------------------------------------------------------------------------------------------------                                
 
 ; Panel that contains graph graphic representation
@@ -170,16 +178,45 @@
                                    [min-width 900]))
 
 
-; Draw a red circle in the right panel
-(define circles (new canvas% [parent drawGraphPanel]
-                                        [paint-callback
-                                        (lambda (canvas dc)
-                                        (send dc set-brush "red" 'solid) ; set pincel to red color
-                                        (send dc draw-ellipse 300 300 100 100) ; use racket ellipse function to draw a circle
-                                        (send dc set-text-foreground "black") 
-                                        (send dc set-font (make-font #:size 12 #:weight 'bold))
-                                        (send dc draw-text "Canada" 310 335))])) ; Write a name in middle of the circle X Y
+;Create the canvas where the graph stands
+(define graphCanvas (new canvas% [parent drawGraphPanel]))
 
+; Define the dc to draw over the canavs
+(define dc (send graphCanvas get-dc))
+
+; Function for draw a node (circle and title)
+(define (drawNode x y title)
+      (send dc set-brush "red" 'solid) ; set pincel to red color
+      (send dc draw-ellipse x y 130 130) ; use racket ellipse function to draw a circle
+      (send dc set-text-foreground "black") 
+      (send dc set-font (make-font #:size 13 #:weight 'bold))
+      (send dc draw-text title (+ x 25) (+ y 50)) ; Write a name in middle of the circle X Y
+)
+
+(define nodeCounter 0)
+
+; Matrix with the coords of the nodes
+(define nodeCoords '((255 20 180 138) ; node 1
+                     (515 20 180 138) ; node 2
+                     (720 170 180 138) ; node 3
+                     (720 430 180 138) ; node 4
+                     (515 620 180 138) ; node 5
+                     (255 620 180 138) ; node 6
+                     (50 430 180 138) ; node 7
+                     (50 170 180 138))) ; node 8
+
+; Function to take a element in a list, given a position
+(define (getXCoord lst)
+      (list-ref lst 0)) ; Return the element at the specified position
+
+(define (getYCoord lst)
+      (list-ref lst 1)) ; Return the element at the specified position
+
+(define (getPointerXCoord lst)
+      (list-ref lst 2)) ; Return the element at the specified position
+
+(define (getPointerYCoord lst)
+      (list-ref lst 3)) ; Return the element at the specified position
 
 ;---------------------------------------------------------------------------------------------------------------
 (send frame show #t)

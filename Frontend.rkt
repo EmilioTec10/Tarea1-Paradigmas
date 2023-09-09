@@ -14,6 +14,7 @@
 ; Make the two left panels show in vertical form
 (define verticalBox (new vertical-panel% [parent horizontalBox]
                                          [min-width 300]))
+
 ;------------------------------------------------------------------------------------------------------------------
 ; Panel that contains insert nodes funtionality
 (define InsNodesPanel (new vertical-panel% [parent verticalBox]
@@ -66,7 +67,7 @@
 ; Initialize an empty list to store inserted nodes
 (define nodesList '()) ;when contains items looks like '("Rusia" "Brazil" "France")
 
-(define relationsList '())
+(define relationsList '()) ; ( (0 1 25) (2 5 30) (2 3 10) )
 
  
 ;-------------------------------------------------------------------------------------------------------------------                                  
@@ -84,7 +85,7 @@
 
 ; First choices box to indicate the beggin node
 (define begginChoiceRel (new choice%
-                    [label "Inicio:  "]
+                    [label "Inicio: "]
                     [parent insRelPanel]
                     [choices nodesList]
                     [font (make-font #:size 14 #:weight 'bold)]
@@ -168,7 +169,7 @@
                    [callback (lambda (button event)
                                (display (send begginChoiceDir get-selection) newline))]))
 
-;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Falta Funcionalidad <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+; Reset the graph and all the variables
 (define deleteGraph (new button%
                    [parent getDirPanel]
                    [label "Eliminar Mapa"]

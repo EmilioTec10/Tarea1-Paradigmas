@@ -1,1 +1,1 @@
-d
+(display((car grafo-actual)))

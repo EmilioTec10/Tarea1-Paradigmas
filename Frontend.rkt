@@ -54,11 +54,10 @@
 
                                         ;All refer to add the nodes to the graph
                                         (define nodeG (create-node text)) ;Creates the node that will go to the graph
-                                        (set! my-graph (add-nodes-to-graph my-graph (list nodeG))) ;Adds the node to the graph
-                                        (printf "Inserted: ~a\n" text)
-                                        (displayln "Nodes:")
-                                        (for-each (λ (node) (displayln (node-name node))) (get-nodes my-graph)) ;Prints the nodes of the graph 
-                                                                            
+                                        (set! graph (agregar-nodo-al-grafo graph nodeG))
+                                        (display graph)
+                                        (newline)
+                                        (printf "Inserted: ~a\n" text)                    
                                         (send nodesNameInput set-value "") ; Clear the text field after insert
                                       
                                   (define node (list-ref nodeCoords nodeCounter))
@@ -76,7 +75,7 @@
 
 (define relationsList '()) ; ( (0 1 25) (2 5 30) (2 3 10) )
 
-(define my-graph (make-graph '() '()))
+(define graph '())
 
 ;-------------------------------------------------------------------------------------------------------------------                                  
 
@@ -131,12 +130,8 @@
                                (when (and (not (string=? weight "")) (not(equal? beggin destiny)))
                                         (define relation (list beggin destiny (string->number weight)))
                                         (set! relationsList (cons relation relationsList)) ; Store in a list the new nodes
-                                        
-                                        ;All refer to add the edge to the graph 
-                                        (define edge (create-edge beggin destiny weight)) ;Creates the edge that it will be added to the graph
-                                        (set! my-graph (add-edges-to-graph my-graph (list edge))) ;Adds the edge to the graph
-                                        (displayln "Edges:")
-                                        (for-each (λ (edge) (displayln (format "Source: ~a, Target: ~a, Weight: ~a" (edge-source edge) (edge-target edge) (edge-weight edge)))) (get-edges my-graph)) ;Print the edges of the graph
+                                        (set! graph (agregar-arista graph (obtener-por-indice nodesList beggin) (obtener-por-indice nodesList destiny) weight)) ;Creates the edge that it will be added to the graph
+                                        (display graph)
 
                                         (send distanceInput set-value "") ; Clear the text field after insert
                                         (define begginXCoord (getPointXCoord (list-ref nodeCoords beggin)))

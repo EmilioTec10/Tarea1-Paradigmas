@@ -1,47 +1,48 @@
 #lang racket
 
-(provide agregar-arista)
-(provide agregar-nodo)
-(provide obtener-pesos)
+(provide add-edge)
+(provide get-weight)
 (provide create-node)
-(provide agregar-nodo-al-grafo)
-(provide obtener-por-indice)
+(provide add-node-to-graph)
+(provide get-by-index)
 
-(define (agregar-nodo grafo nodo)
-  (cons (cons nodo '(())) grafo))
+;Adds a node to the graph
+(define (add-node-to-graph graph new-node)
+  (cons new-node graph))
 
-(define (agregar-nodo-al-grafo grafo nuevo-nodo)
-  (cons nuevo-nodo grafo))
-
+;Create a node by its name
 (define (create-node name)
 (list name '()))
 
-(define (obtener-pesos nodo grafo)
-  (cdr (assoc nodo grafo)))
+;Get the weight of an edge
+(define (get-weight node graph)
+  (cdr (assoc node graph)))
 
-
-(define (agregar-arista grafo nodo-origen nodo-destino peso)
-  (define (agregar-aux grafo-actual) 
+;Adds an edge to the graph
+(define (add-edge graph origin-node destiny-node weight)
+  (define (add-aux actual-graph) ;Auxiliar function that helps to get the actual graph to analize
     (cond
-      ((null? grafo-actual) (list (list nodo-origen nodo-destino peso)))
-      ((and(empty? (car(cdr(car grafo-actual)))) (cons (caar grafo-actual) (list (list nodo-destino peso)))(string=?  (car (car grafo-actual)) nodo-origen))
-      (list(append (cons (caar grafo-actual) (list(list (list nodo-destino peso)))) (cdr grafo-actual))))
-      ((string=?  (car (car grafo-actual)) nodo-origen)
-       (display (cons(caar grafo-actual) (list(list nodo-destino peso))))
-       (cons (append (list (caar grafo-actual)) (list(append (car(cdr(car grafo-actual))) (list (list nodo-destino peso))))) (cdr grafo-actual)))
+      ((null? actual-graph) (list (list origin-node destiny-node weight)))
+      ((and 
+      (empty? (cadr(car actual-graph))) ;Checks if the node has any edges
+        (cons (caar actual-graph) (list (list destiny-node weight))) ;In case it is empty puts the first edge in the list of edges of the node
+      (string=?  (caar actual-graph) origin-node)) ;Checks if the origin node is equal to the firts node in the actual graph
+        (list(append (cons (caar actual-graph) (list(list (list destiny-node weight)))) (cdr actual-graph)))) ;In case is true it adds the new edge into the list of edges
+      ((string=?  (car (car actual-graph)) origin-node) ;Else if checks if the origin node is equal to the firts node in the actual graph
+        (display (cons(caar actual-graph) (list(list destiny-node weight))))
+        (cons (append (list (caar actual-graph)) (list(append (cadr(car actual-graph)) (list (list destiny-node weight))))) (cdr actual-graph)));Adds the edge in the list of edges in the node
       (else
-       (cons (car grafo-actual) (agregar-aux (cdr grafo-actual))))))
+        (cons (car actual-graph) (add-aux (cdr actual-graph)))))) ;recursive call with the rest of the graph
 
-  (agregar-aux grafo))
+  (add-aux graph))
 
-
-(define (obtener-por-indice lista indice)
+;Gets an element of a list by its index
+(define (get-by-index list index)
   (cond
-    [(< indice 0) (error "Índice fuera de rango")]
-    [(= indice 0) (car lista)]
-    [else (obtener-por-indice (cdr lista) (- indice 1))]))
+    [(< index 0) (error "Index out of range")]
+    [(= index 0) (car list)]
+    [else (get-by-index (cdr list) (- index 1))]))
 
-;(define grafo-con-arista (agregar-arista grafo-con-nuevo-nodo 6 1 4))
 
 
 

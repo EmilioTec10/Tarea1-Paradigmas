@@ -1,1 +1,1 @@
-(display((car grafo-actual)))
+                           (display nodesList)

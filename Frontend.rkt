@@ -3,7 +3,7 @@
 
 ; Create a main window and set their parameters
 (define frame (new frame%
-                   [label "Simple GUI"]
+                   [label "Wazitico"]
                    [width 1200]
                    [height 690]
                    [stretchable-width #f]
@@ -50,11 +50,11 @@
                                [callback (lambda (button event) ; Button functionality
                                   (define text (send nodesNameInput get-value)) ; Get text from text box input
                                   (when (not (string=? text ""))
-                                        (set! nodesList (cons text nodesList)) ; Store in a list the new nodes
-
+                                        (set! nodesList (append nodesList (list text))) ; Store in a list the new nodes
+                                        
                                         ;All refer to add the nodes to the graph
                                         (define nodeG (create-node text)) ;Creates the node that will go to the graph
-                                        (set! graph (agregar-nodo-al-grafo graph nodeG))
+                                        (set! graph (add-node-to-graph graph nodeG))
                                         (display graph)
                                         (newline)
                                         (printf "Inserted: ~a\n" text)                    
@@ -130,7 +130,11 @@
                                (when (and (not (string=? weight "")) (not(equal? beggin destiny)))
                                         (define relation (list beggin destiny (string->number weight)))
                                         (set! relationsList (cons relation relationsList)) ; Store in a list the new nodes
-                                        (set! graph (agregar-arista graph (obtener-por-indice nodesList beggin) (obtener-por-indice nodesList destiny) weight)) ;Creates the edge that it will be added to the graph
+                                        (display nodesList)
+                                        (newline)
+                                        (display destiny)
+                                        (newline)
+                                        (set! graph (add-edge graph (get-by-index nodesList beggin) (get-by-index nodesList destiny) weight)) ;Creates the edge that it will be added to the graph
                                         (display graph)
 
                                         (send distanceInput set-value "") ; Clear the text field after insert

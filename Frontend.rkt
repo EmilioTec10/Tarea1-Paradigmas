@@ -269,9 +269,9 @@
 )
 
 ; Convert a list of node names to their positions
-(define (convertToNumbers lst) (convertToNumbersAux list '()))
+(define (convertToNumbers lst) (convertToNumbersAux lst '()))
 (define (convertToNumbersAux lst res)
-      (cond ((null? (cdr list)) res)
+      (cond ((null? (cdr lst)) res)
             (else (append res (findPosition nodesList (car list)))
                   (convertToNumbersAux (cdr lst) res))
       )

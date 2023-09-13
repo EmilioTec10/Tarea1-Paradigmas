@@ -1,5 +1,6 @@
 #lang racket
 
+; Public Methods of the library
 (provide add-edge)
 (provide get-weight)
 (provide create-node)
@@ -44,38 +45,44 @@
     [(= index 0) (car list)]
     [else (get-by-index (cdr list) (- index 1))]))
 
-;BFS Algorithm
+;----------------------------------------- BFS Algorithm -------------------------------------------------
 
+; Verify if a node is equal at the last of a route
 (define (functional-route end route)
   (equal? end (car route)))
 
+; Verify if a node with weight is equal at the last of a route
 (define (functional-route-with-weight end route)
   (equal? end (caar route)))
 
+; Return the neighbors nodes of a specific node in the graph
 (define (neighbors element graph)
   (neighbors-aux (assoc element graph) element graph))
 
+; Search in the adyacent list for find the neighbors nodes
 (define (neighbors-aux result element graph)
   (cond ((equal? result #f) #f)
         (else
          (cond ((null? (cdr result)) (cdr result))
                (else (cadr result))))))
 
+; Verify if a node is in the list of the nodes that conform the path
 (define (node-part-route? ele list)
   (cond ((null? list) #f)
         ((equal? ele (car list)) #t)
         (else (node-part-route? ele (cdr list)))))
 
+; Verify if a node with weight is in the list of the nodes that conform the path with weights
 (define (node-part-route?_weight ele list)
   (cond ((null? list) #f)
         ((equal? ele (caar list)) #t)
         (else (node-part-route?_weight ele (cdr list)))))
 
+; Find the neighbors nodes of a path in graph and create extends paths
 (define (neighbors_nodes route graph)
   (neighbors_nodes_aux route '() graph (neighbors (car route) graph)))
 
-
-
+; Makes the search and entension of paths
 (define (neighbors_nodes_aux route generated_route graph neighbors)
   (cond ((null? neighbors) generated_route)
         (else
@@ -88,11 +95,9 @@
                  graph
                  (cdr neighbors)))))))
 
-
+; Makes the search and extension of paths, and keep a register of the weight in each node of the path
 (define (neighbors_nodes_weight route graph)
   (neighbors_nodes_weight_aux route '() graph (neighbors (caar route) graph)))
-
-
 (define (neighbors_nodes_weight_aux route generated_route graph neighbors)
   (cond ((null? neighbors) generated_route)
         (else
@@ -105,17 +110,17 @@
                  graph
                  (cdr neighbors)))))))
 
-;Esta función revierte una list de routes para que estén en el orden correcto.
+; This function reverts a list of paths in order to keep it in the rigth way 
 (define (reverts_elem routesAux routes)
   (cond ((null? routes) routesAux)
         (else (reverts_elem
                (append (list (reverse (car routes))) routesAux)
                (cdr routes)))))
-;Esta función busca un camino desde un nodo de inicio hasta un nodo de destino en el grafo.
-;Utiliza una list de routes para llevar un registro de los caminos posibles.
+
+; Function that search a way from a beggining node to a destiny node in the graph
+; Use a list of routes to keep a register of posibles paths
 (define (exist_path begin end graph)
   (exist_path_aux (list (list begin)) end graph '()))
-
 (define (exist_path_aux routes end graph total)
   (cond ((null? routes) (reverts_elem '() total))
         ((functional-route end (car routes))
@@ -131,9 +136,9 @@
           graph
           total))))
 
+; Similar to exist weight, but keeps a register of weights
 (define (exist_path_weight begin end graph)
   (exist_path_weight_aux (list (list (list begin '0))) end graph '()))
-
 (define (exist_path_weight_aux routes end graph total)
   (cond ((null? routes) (reverts_elem '() total))
         ((functional-route-with-weight end (car routes))
@@ -149,9 +154,9 @@
           graph
           total))))
 
+; Calculate the total distance of the shortest path
 (define (distance_between_routes routes)
   (distance_between_routes_aux routes '()))
-
 (define (distance_between_routes_aux routes listaTotales)
   (cond ((null? routes) listaTotales)
         (else
@@ -159,6 +164,7 @@
           (cdr routes)
           (append listaTotales (list (totalDistanceRoute 0 (car routes))))))))
 
+; Calculate the total route weight adding all single weights of the nodes
 (define (totalDistanceRoute num route)
   (cond ((null? route) num)
         (else 
@@ -167,9 +173,9 @@
                 (totalDistanceRoute (+ num (string->number peso)) (cdr route))
                 (totalDistanceRoute (+ num peso) (cdr route)))))))
 
+; Function that find the ind of the minimun element in a results lists
 (define (least_result list)
   (least_result_aux list (car list) 0))
-
 (define (least_result_aux list num counter)
   (cond ((null? list) counter)
         (else
@@ -178,9 +184,7 @@
                (else
                 (least_result_aux (cdr list) (car list) (+ counter 1)))))))
 
-
-
-
+; Find the shortest path between to nodes in the graph. Use complementary functions for search y get distances
 (define (shortest_path begin end graph)
   (cond ((not (valid_node? begin graph)) => (lambda (_) "Nodo de inicio invalido"))
         ((not (valid_node? end graph)) => (lambda (_) "Nodo de end invalido"))
@@ -189,9 +193,11 @@
           (exist_path_weight begin end graph)
           (exist_path begin end graph)))))
 
+; Verify if a node is valid in the graph
 (define (valid_node? nodo graph)
   (not (null? (assoc nodo graph))))
 
+; Find the shortest path between two nodes with and without weights
 (define (shortest_path_aux routes routesWithoutWeight)
   (cond ((null? routes) "No hay camino existente")
         (else
@@ -200,6 +206,7 @@
           routes
           routesWithoutWeight))))
 
+; Find the shortest path in base of minimun distance
 (define (camino_mas_corto_aux2 num routes routesWithoutWeight)
   (cond ((zero? num)
          (cons (car routesWithoutWeight) (list (totalDistanceRoute 0 (car routes)))))

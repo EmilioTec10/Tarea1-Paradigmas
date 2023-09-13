@@ -187,7 +187,10 @@
                    [min-height 50]
                    [callback (lambda (button event)
                               (newline)
-                              (display (shortest_path (get-by-index nodesList (send begginChoiceDir get-selection )) (get-by-index nodesList(send endChoiceDir get-selection)) graph)))]))
+                              (define path (shortest_path (get-by-index nodesList (send begginChoiceDir get-selection )) (get-by-index nodesList(send endChoiceDir get-selection)) graph))
+                              (display path)
+                              (define finalPath (convertToNumbers path))
+                              (display finalPath))]))
 
 ; Reset the graph and all the variables
 (define deleteGraph (new button%

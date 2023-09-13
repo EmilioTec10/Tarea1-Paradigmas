@@ -72,11 +72,11 @@
                                 ]))  
 
 ; Initialize an empty list to store inserted nodes
-(define nodesList '()) ;when contains items looks like '("Rusia" "Brazil" "France")
+(define nodesList '()) ; list with inserted nodes, looks like '("Rusia" "Brazil" "France")
 
-(define relationsList '()) ; ( (0 1 25) (2 5 30) (2 3 10) )
+(define relationsList '()) ; Relation list with the form '( (0 1 25) (2 5 30) (2 3 10) )
 
-(define graph '())
+(define graph '()) ; graph with the form '( (a (b c)) (b (a c)) (c (a b)) )
 
 ;-------------------------------------------------------------------------------------------------------------------                                  
 
@@ -116,7 +116,7 @@
                                     [min-width 100]
                                     [vert-margin 3]))
 
-;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Falta Funcionalidad <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+; Button for insert a new relation between two nodes
 (define relButton (new button%
                    [parent insRelPanel]
                    [label "Insertar"]
@@ -144,19 +144,22 @@
                                         (define endXCoord (getPointXCoord (list-ref nodeCoords destiny)))
                                         (define endYCoord (getPointYCoord (list-ref nodeCoords destiny)))
                                         (drawLine begginXCoord begginYCoord endXCoord endYCoord)
+                                        (drawSquare (- endXCoord 4) (- endYCoord 4))
                                         (writeText weight (/ (+ begginXCoord endXCoord) 2) (/ (+ begginYCoord endYCoord) 2))))]))
 
 ;------------------------------------------------------------------------------------------------------------------                                
 
-; Panel that contains insert relations between nodes functionality
+; Panel that contains directions between nodes functionality
 (define getDirPanel (new vertical-panel% [parent verticalBox]
                                 [border 10]
                                 [min-height 300]))
 
+; Title of the directions panel
 (define dirTitle (new message% [parent getDirPanel]
                         [label "Calcule las rutas aquí"]
                         [font (make-font #:size 16 #:weight 'bold)]))
 
+; Beggin choices Box
 (define begginChoiceDir (new choice%
                     [label "Inicio:  "]
                     [parent getDirPanel]
@@ -165,6 +168,7 @@
                     [min-width 100]
                     [vert-margin 3]))
 
+; Destiny Choices Box
 (define endChoiceDir (new choice%
                     [label "Destino:  "]
                     [parent getDirPanel]
@@ -173,7 +177,7 @@
                     [min-width 100]
                     [vert-margin 3]))
 
-;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Falta Funcionalidad <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+; Button to show the shortest path between selected nodes
 (define dirbutton (new button%
                    [parent getDirPanel]
                    [label "Calcular Ruta"]
@@ -225,18 +229,26 @@
       (send dc draw-text title (+ x 25) (+ y 50)) ; Write a name in middle of the circle X Y
 )
 
+; Function for draw lines point to point
 (define (drawLine x1 y1 x2 y2)
       (send dc set-pen "black" 2 'solid) ; Change the color to black
       (send dc draw-line x1 y1 x2 y2)
 )
 
+; Function for write text in graph canvas
 (define (writeText text x y)
       (send dc set-text-foreground "blue") 
       (send dc set-font (make-font #:size 11 #:weight 'bold))
       (send dc draw-text text x y) ; Write a name in middle of the circle X Y
 )
 
-(define nodeCounter 0)
+; Function that draws a small square 
+(define (drawSquare x y)
+      (send dc set-brush "black" 'solid)
+      (send dc draw-rectangle x y 8 8)
+)
+
+(define nodeCounter 0) ; created nodes counter
 
 ; Matrix with the coords of the nodes
 (define nodeCoords '((255 20 320 150) ; node 0 (x1 y1 pointX1 pointY1)
@@ -262,4 +274,4 @@
       (list-ref lst 3)) ; Return the element at the specified position
 
 ;---------------------------------------------------------------------------------------------------------------
-(send frame show #t)
+(send frame show #t) ; Show the main frame

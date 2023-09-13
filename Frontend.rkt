@@ -143,7 +143,8 @@
                                         (define begginYCoord (getPointYCoord (list-ref nodeCoords beggin)))
                                         (define endXCoord (getPointXCoord (list-ref nodeCoords destiny)))
                                         (define endYCoord (getPointYCoord (list-ref nodeCoords destiny)))
-                                        (drawLine begginXCoord begginYCoord endXCoord endYCoord)
+                                        (drawLine begginXCoord begginYCoord endXCoord endYCoord "black")
+                                        
                                         (drawSquare (- endXCoord 4) (- endYCoord 4))
                                         (writeText weight (/ (+ begginXCoord endXCoord) 2) (/ (+ begginYCoord endYCoord) 2))))]))
 
@@ -230,8 +231,8 @@
 )
 
 ; Function for draw lines point to point
-(define (drawLine x1 y1 x2 y2)
-      (send dc set-pen "black" 2 'solid) ; Change the color to black
+(define (drawLine x1 y1 x2 y2 color)
+      (send dc set-pen color 2 'solid) ; Change the color to black
       (send dc draw-line x1 y1 x2 y2)
 )
 
@@ -246,6 +247,23 @@
 (define (drawSquare x y)
       (send dc set-brush "black" 'solid)
       (send dc draw-rectangle x y 8 8)
+)
+
+; Function for draw all relation of the graph again
+(define (drawRelations)
+      (define sizeRelList (length relationsList))
+      (display sizeRelList)
+      (for/list ([i (in-range sizeRelList)])
+      (display i)
+      (define node (list-ref relationsList i))
+      (define beggin (list-ref node 0))
+      (define destiny (list-ref node 1))
+      (define begginXCoord (getPointXCoord (list-ref nodeCoords beggin)))
+      (define begginYCoord (getPointYCoord (list-ref nodeCoords beggin)))
+      (define endXCoord (getPointXCoord (list-ref nodeCoords destiny)))
+      (define endYCoord (getPointYCoord (list-ref nodeCoords destiny)))
+      (drawLine begginXCoord begginYCoord endXCoord endYCoord "black")
+      )
 )
 
 (define nodeCounter 0) ; created nodes counter

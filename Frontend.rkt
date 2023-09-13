@@ -48,6 +48,7 @@
                                [min-width 100]
                                [min-height 50]
                                [callback (lambda (button event) ; Button functionality
+                               (when (< nodeCounter 8)
                                   (define text (send nodesNameInput get-value)) ; Get text from text box input
                                   (when (not (string=? text ""))
                                         (set! nodesList (append nodesList (list text))) ; Store in a list the new nodes
@@ -67,7 +68,7 @@
                                   (send begginChoiceRel append text) 
                                   (send endChoiceRel append text) 
                                   (send begginChoiceDir append text) 
-                                  (send endChoiceDir append text))) 
+                                  (send endChoiceDir append text)))) 
                                 ]))  
 
 ; Initialize an empty list to store inserted nodes

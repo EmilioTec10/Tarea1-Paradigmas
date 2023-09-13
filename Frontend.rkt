@@ -144,7 +144,6 @@
                                         (define endXCoord (getPointXCoord (list-ref nodeCoords destiny)))
                                         (define endYCoord (getPointYCoord (list-ref nodeCoords destiny)))
                                         (drawLine begginXCoord begginYCoord endXCoord endYCoord "black")
-                                        
                                         (drawSquare (- endXCoord 4) (- endYCoord 4))
                                         (writeText weight (/ (+ begginXCoord endXCoord) 2) (/ (+ begginYCoord endYCoord) 2))))]))
 
@@ -264,6 +263,24 @@
       (define endYCoord (getPointYCoord (list-ref nodeCoords destiny)))
       (drawLine begginXCoord begginYCoord endXCoord endYCoord "black")
       )
+)
+
+; Convert a list of node names to their positions
+(define (convertToNumbers lst) (convertToNumbersAux list '()))
+(define (convertToNumbersAux lst res)
+      (cond ((null? (cdr list)) res)
+            (else (append res (findPosition nodesList (car list)))
+                  (convertToNumbersAux (cdr lst) res))
+      )
+)
+
+; Function that return the position of a element in a list
+(define (findPosition lst elem)
+      (define (iter index lst)
+            (cond [(null? lst) #f] ; Element not found
+                  [(equal? (car lst) elem) index]
+                  [else (iter (+ index 1) (cdr lst))]))
+      (iter 0 lst)
 )
 
 (define nodeCounter 0) ; created nodes counter

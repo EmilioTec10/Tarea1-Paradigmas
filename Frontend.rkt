@@ -181,7 +181,8 @@
                    [min-width 100]
                    [min-height 50]
                    [callback (lambda (button event)
-                               (display (send begginChoiceDir get-selection) newline))]))
+                              (newline)
+                              (display (camino_mas_corto (get-by-index nodesList (send begginChoiceDir get-selection )) (get-by-index nodesList(send endChoiceDir get-selection)) graph)))]))
 
 ; Reset the graph and all the variables
 (define deleteGraph (new button%
